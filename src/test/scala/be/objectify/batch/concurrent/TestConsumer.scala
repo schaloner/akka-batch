@@ -11,10 +11,10 @@ import scala.concurrent.Future
 class TestConsumer(master: ActorSelection) extends Consumer(master) {
   implicit val ec = context.dispatcher
 
-  override def doWork(workSender: ActorRef, key: Any, work: Any): Future[WorkComplete] = {
+  override def doWork(eventListener: ActorRef, key: Any, work: Any): Future[WorkComplete] = {
     import akka.pattern.pipe
     Future {
-      workSender ! WorkSuccess(key, work, "ok")
+      eventListener ! WorkSuccess(key, work, "ok")
       WorkComplete(key, "done", successful = true)
     } pipeTo self
   }

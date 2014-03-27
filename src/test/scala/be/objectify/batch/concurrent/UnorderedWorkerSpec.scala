@@ -29,13 +29,13 @@ class UnorderedWorkerSpec extends TestKit(ActorSystem("WorkerSpec")) with Implic
       val onFinishListener = new OnFinishListener() {
         def jobFinished(processed: Int, errors: Int): Unit = {}
       }
-      val resultListener = system.actorOf(Props(classOf[TestResultListener], onFinishListener, "unordered"), "resultListener")
-      val master = system.actorOf(Props(classOf[Master], resultListener), "master")
-      system.actorOf(Props(classOf[TestProducer], master, resultListener), "producer")
+      val eventListener = system.actorOf(Props(classOf[TestEventListener], onFinishListener, "unordered"), "resultListener")
+      val master = system.actorOf(Props(classOf[Master], eventListener), "master")
+      system.actorOf(Props(classOf[TestProducer], master, eventListener), "producer")
 
       consumer("master", 1)
 
-      resultListener ! self
+      eventListener ! self
       master ! CheckForFinish
 
       expectMsgAllOf("do", "re", "mi", "fa", "sol")

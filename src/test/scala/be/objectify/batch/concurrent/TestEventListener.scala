@@ -7,7 +7,7 @@ import akka.actor.ActorRef
  * @param onFinishListener
  * @param workType
  */
-class TestResultListener(onFinishListener: OnFinishListener, workType: String) extends ResultListener(onFinishListener) {
+class TestEventListener(onFinishListener: OnFinishListener, workType: String) extends EventListener(onFinishListener) {
 
   var probe: Option[ActorRef] = None
 

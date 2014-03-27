@@ -12,7 +12,7 @@ abstract class Consumer(master: ActorSelection) extends Actor with ActorLogging 
   import Protocol._
   import context._
 
-  def doWork(workSender: ActorRef, key: Any, work: Any): Future[WorkComplete]
+  def doWork(eventListener: ActorRef, key: Any, work: Any): Future[WorkComplete]
 
   def onCustomMessage(message: Any) = unhandled(message)
 

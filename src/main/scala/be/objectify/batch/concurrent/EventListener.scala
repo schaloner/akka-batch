@@ -6,7 +6,7 @@ import akka.actor._
  *
  * @param onFinishListener
  */
-abstract class ResultListener(onFinishListener: OnFinishListener) extends Actor with ActorLogging {
+abstract class EventListener(onFinishListener: OnFinishListener) extends Actor with ActorLogging {
 
   import Protocol._
 

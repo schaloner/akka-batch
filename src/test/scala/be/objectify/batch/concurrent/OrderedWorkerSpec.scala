@@ -29,13 +29,13 @@ class OrderedWorkerSpec extends TestKit(ActorSystem("WorkerSpec")) with Implicit
       val onFinishListener = new OnFinishListener() {
         def jobFinished(processed: Int, errors: Int): Unit = {}
       }
-      val resultListener = system.actorOf(Props(classOf[TestResultListener], onFinishListener, "ordered"), "sequencedResultListener")
-      val master = system.actorOf(Props(classOf[Master], resultListener), "sequencedMaster")
-      system.actorOf(Props(classOf[TestProducer], master, resultListener), "producer")
+      val eventListener = system.actorOf(Props(classOf[TestEventListener], onFinishListener, "ordered"), "sequencedResultListener")
+      val master = system.actorOf(Props(classOf[Master], eventListener), "sequencedMaster")
+      system.actorOf(Props(classOf[TestProducer], master, eventListener), "producer")
 
       consumer("sequencedMaster", 1)
 
-      resultListener ! self
+      eventListener ! self
       master ! CheckForFinish
       expectMsg("do")
       expectMsg("re")

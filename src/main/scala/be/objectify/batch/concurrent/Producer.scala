@@ -6,9 +6,9 @@ import scala.concurrent.Future
 /**
  *
  * @param master
- * @param resultListener
+ * @param eventListener
  */
-abstract class Producer(master: ActorRef, resultListener: ActorRef) extends Actor with ActorLogging {
+abstract class Producer(master: ActorRef, eventListener: ActorRef) extends Actor with ActorLogging {
 
   import Protocol._
   import context._
@@ -25,11 +25,11 @@ abstract class Producer(master: ActorRef, resultListener: ActorRef) extends Acto
       context.become(idle)
     case MoreWorkAvailable =>
       log.debug("[Active] More work available, informing listener and becoming idle")
-      resultListener ! MoreWorkAvailable
+      eventListener ! MoreWorkAvailable
       context.become(idle)
     case NoRemainingWork =>
       log.debug("[Active] No remaining work, informing listener and becoming idle")
-      resultListener ! JobFinished
+      eventListener ! JobFinished
       context.become(idle)
     case CheckForWork =>
       log.error("[Active] We're already checking for work, learn patience")

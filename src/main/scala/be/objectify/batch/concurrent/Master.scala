@@ -5,9 +5,9 @@ import akka.actor.{Terminated, ActorLogging, Actor, ActorRef}
 
 /**
  *
- * @param resultListener
+ * @param eventListener
  */
-class Master(resultListener: ActorRef) extends Actor with ActorLogging {
+class Master(eventListener: ActorRef) extends Actor with ActorLogging {
 
   import Protocol._
 
@@ -71,7 +71,7 @@ class Master(resultListener: ActorRef) extends Actor with ActorLogging {
       }
 
       if (noWork) {
-        resultListener ! WorkQueueEmpty
+        eventListener ! WorkQueueEmpty
       }
     case Work(items) =>
       log.debug("Received work for [{}] keys", items.size)
@@ -80,7 +80,7 @@ class Master(resultListener: ActorRef) extends Actor with ActorLogging {
           case 0 => log.debug("No items associated with [{}]", pair._1)
           case _ => {
             log.debug("Added work for key [{}]", pair._1)
-            workQueue.enqueue(WorkAssociation(pair._1, pair._2.head, sender(), earlierSequenceOk = true))
+            workQueue.enqueue(WorkAssociation(pair._1, pair._2.head, eventListener, earlierSequenceOk = true))
             val otherItemsForKey: List[Any] = pair._2.tail
             otherItemsForKey.size match {
               case 0 =>  log.debug("No sequenced items associated with [{}]", pair._1)
@@ -94,7 +94,7 @@ class Master(resultListener: ActorRef) extends Actor with ActorLogging {
       notifyConsumers()
     case ReQueue(key, work) =>
       log.debug("Re-queuing items for key [{}]", key)
-      workQueue.enqueue(WorkAssociation(key, work, sender(), earlierSequenceOk = true))
+      workQueue.enqueue(WorkAssociation(key, work, eventListener, earlierSequenceOk = true))
       notifyConsumers()
     case ConsumerCreated(consumer) =>
       log.debug("Consumer registered with master")
@@ -105,7 +105,7 @@ class Master(resultListener: ActorRef) extends Actor with ActorLogging {
       noWork match {
         case true => {
           log.debug("No work available in master, informing listener")
-          resultListener ! WorkQueueEmpty
+          eventListener ! WorkQueueEmpty
         }
         case false =>
       }
