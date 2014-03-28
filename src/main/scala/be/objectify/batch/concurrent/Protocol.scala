@@ -8,8 +8,8 @@ import akka.actor.ActorRef
 object Protocol {
 
   // Master messages
-  case class NoWorkToBeDone()
-  case class WorkIsReady()
+  object NoWorkToBeDone
+  object WorkIsReady
   case class WorkToBeDone(key: Any, work: Any)
   case class ReQueue(key: Any, work: Any)
 
@@ -21,19 +21,21 @@ object Protocol {
   case class WorkComplete(key: Any, result: Any, successful: Boolean)
 
   // Listener messages
-  case class JobFinished()
+  object JobFinished
   case class JobStatus(processed: Int, errors: Int)
-  case class QueryJobStatus()
+  object QueryJobStatus
   case class WorkError(key: Any, work: Any, message: String)
   case class WorkSuccess(key: Any, work: Any, message: String)
-  case class WorkQueueEmpty()
+  object WorkQueueEmpty
 
   // Producer messages
   case class CheckForWork(processed: Int, errors: Int, parameters: Map[Any, Any])
   case class LoadWork(processed: Int, errors: Int, parameters: Map[Any, Any])
-  case class CheckForFinish()
-  case class MoreWorkAvailable()
-  case class LoadWorkFinished()
-  case class NoRemainingWork()
-  case class Work(items: Map[Any, List[Any]])
+  object CheckForFinish
+  object LoadWorkFinished
+  case class Work(items: scala.collection.Map[Any, List[Any]])
+
+  sealed trait WorkStatus
+  object MoreWorkAvailable extends WorkStatus
+  object NoRemainingWork extends WorkStatus
 }

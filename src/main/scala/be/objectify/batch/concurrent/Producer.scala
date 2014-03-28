@@ -15,7 +15,7 @@ abstract class Producer(master: ActorRef, eventListener: ActorRef) extends Actor
 
   def onCustomMessage(message: Any) = unhandled(message)
 
-  def hasMoreWork(processed: Int, errors: Int, parameters: Map[Any, Any]): Future[Any]
+  def hasMoreWork(processed: Int, errors: Int, parameters: Map[Any, Any]): Future[WorkStatus]
 
   def getWork(processed: Int, errors: Int, parameters: Map[Any, Any]): Future[Work]
 

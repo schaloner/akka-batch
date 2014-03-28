@@ -16,8 +16,8 @@ class TestProducer(master: ActorRef, resultListener: ActorRef) extends Producer(
 
   val max = 5
 
-  def hasMoreWork(processed: Int, errors: Int, parameters: Map[Any, Any]): Future[Any] = {
-    Future[Any] {
+  def hasMoreWork(processed: Int, errors: Int, parameters: Map[Any, Any]): Future[WorkStatus] = {
+    Future[WorkStatus] {
       processed match {
         case p if p < max => MoreWorkAvailable
         case _ => NoRemainingWork
